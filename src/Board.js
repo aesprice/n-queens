@@ -161,20 +161,12 @@
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      var x = 0;
+      var x = -(this.get('n')+2);
       var max = this.get('n') - 2;
-      var y = max;
-      for(y; y >= 0; y--) {
+      var y = 0;
+      for(x; x <= max; x++) {
         if(this.hasMajorDiagonalConflictAt(x, y)) {
           return true;
-        }
-        if (y === 0) {
-          x++;
-          for(x; x <= max; x++) {
-            if(this.hasMajorDiagonalConflictAt(x, y)) {
-              return true;
-            }
-          }
         }
       }
       return false; // fixme
@@ -208,19 +200,11 @@
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
       var x = 1;
-      var max = this.get('n') - 2;
+      var max = this.get('n') + 1;
       var y = 0;
-      for(x; x <= this.get('n') - 1; x++) {
+      for(x; x <= max; x++) {
         if(this.hasMinorDiagonalConflictAt(x, y)) {
           return true;
-        }
-        if (x === this.get('n') - 1) {
-          y++;
-          for(y; y <= max; y++) {
-            if(this.hasMinorDiagonalConflictAt(x, y)) {
-              return true;
-            }
-          }
         }
       }
       return false; // fixme
