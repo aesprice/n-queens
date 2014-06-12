@@ -79,11 +79,27 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
+      // we want to know whether there are two 1's in the row.
+      var pieces = 0;
+      var y = rowIndex;
+      for(var x = 0; x < this.get('n'); x++){
+        if (this.get(y)[x] === 1) {
+          pieces++;
+        }
+        if (pieces > 1) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
+      for(var y = 0; y < this.get('n'); y++) {
+        if (this.hasRowConflictAt(y)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -94,11 +110,27 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
+      var pieces = 0;
+      var x = colIndex;
+      for(var y = 0; y < this.get('n'); y++){
+        if (this.get(y)[x] === 1) {
+          pieces++;
+        }
+        if (pieces > 1) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      for(var x = 0; x < this.get('n'); x++) {
+        console.log(x);
+        if (this.hasColConflictAt(x)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -108,12 +140,43 @@
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
-    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+    hasMajorDiagonalConflictAt: function(x, y) {
+      var xDiagonal = this._getFirstRowColumnIndexForMajorDiagonalOn(x, y);
+      var yDiagonal = 0;
+      var pieces = 0;
+      for (var i = 0; i < this.get('n'); i++) {
+        if(xDiagonal >= 0 || xDiagonal < this.get('n')) {
+          if(this.get(yDiagonal)[xDiagonal] === 1) {
+            pieces++;
+          }
+        }
+        if(pieces > 1) {
+          return true;
+        }
+        xDiagonal++;
+        yDiagonal++;
+      }
+      return false; // fi
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
+      var x = 0;
+      var max = this.get('n') - 2;
+      var y = max;
+      for(y; y >= 0; y--) {
+        if(this.hasMajorDiagonalConflictAt(x, y)) {
+          return true;
+        }
+        if (y === 0) {
+          x++;
+          for(x; x <= max; x++) {
+            if(this.hasMajorDiagonalConflictAt(x, y)) {
+              return true;
+            }
+          }
+        }
+      }
       return false; // fixme
     },
 
@@ -123,12 +186,43 @@
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
-    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+    hasMinorDiagonalConflictAt: function(x, y) {
+      var xDiagonal = this._getFirstRowColumnIndexForMinorDiagonalOn(x, y);
+      var yDiagonal = 0;
+      var pieces = 0;
+      for (var i = 0; i < this.get('n'); i++) {
+        if(xDiagonal >= 0 || xDiagonal < this.get('n')) {
+          if(this.get(yDiagonal)[xDiagonal] === 1) {
+            pieces++;
+          }
+        }
+        if(pieces > 1) {
+          return true;
+        }
+        xDiagonal--;
+        yDiagonal++;
+      }
+      return false; // fi
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      var x = 1;
+      var max = this.get('n') - 2;
+      var y = 0;
+      for(x; x <= this.get('n') - 1; x++) {
+        if(this.hasMinorDiagonalConflictAt(x, y)) {
+          return true;
+        }
+        if (x === this.get('n') - 1) {
+          y++;
+          for(y; y <= max; y++) {
+            if(this.hasMinorDiagonalConflictAt(x, y)) {
+              return true;
+            }
+          }
+        }
+      }
       return false; // fixme
     }
 
