@@ -27,22 +27,19 @@ window.findNRooksSolution = function(n) {
   for(var i = 0; i < n; i++) {
     solution.push(board.get(i));
   }
+  var xNext = 0;
+  var yNext = 0;
 
   var pieces = 0;
   var placePiece = function(xStart, yStart){
-    console.log('recursing at: ' + xStart + ', ' + yStart)
     for(var y = yStart; y < n; y++) {
-      // console.log('row: ' + y);
       for(var x = xStart; x < n; x++) {
-        // console.log('column: ' + x);
         if (pieces === n) {
           return;
         }
-        console.log('checking at ' + x + ', ' + y);
         solution[y][x] = 1;
         board.set(solution);
         if(!board.hasRowConflictAt(y) && !board.hasColConflictAt(x)){
-          console.log('success!')
           pieces++;
           if(x === n - 1) {
             xNext = 0;
@@ -57,12 +54,14 @@ window.findNRooksSolution = function(n) {
           board.set(solution);
         }
       }
+      if (y < n) {
+        xStart = 0;
+      }
     }
   };
 
   placePiece(0, 0);
 
-  console.dir(solution);
   return solution;
 };
 
@@ -71,37 +70,55 @@ window.findNRooksSolution = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   var board = new Board({n:n});
-  var solutionCount = 0; //fixme
-  var solution = [];
+  var solution = []; //fixme
   for(var i = 0; i < n; i++) {
     solution.push(board.get(i));
   }
+  var solutionCount = 0;
+  var xNext = 0;
+  var yNext = 0;
+
   var pieces = 0;
-  var placePiece = function(x, y){
-    for(y; y < n; y++) {
-      for(x; x < n; x++) {
-        console.log('tile check');
+  console.log('NEW BOARD: ' + n);
+  var placePiece = function(xStart, yStart){
+    for(var y = yStart; y < n; y++) {
+      for(var x = xStart; x < n; x++) {
+        console.log('checking (' + y + ', ' + x + ')...');
+        // console.log(solution);
         solution[y][x] = 1;
         board.set(solution);
         if(!board.hasRowConflictAt(y) && !board.hasColConflictAt(x)){
           pieces++;
-          if (pieces === n) {
+          console.log('placing piece ' + pieces);
+          if(pieces === n) {
             solutionCount++;
-          }
-          if(x === n - 1) {
-            placePiece(0, y+1);
           } else {
-            placePiece(x+1, y);
+            if(x >= n - 1) {
+              xNext = 0;
+              yNext = y + 1;
+            } else {
+              xNext = x + 1;
+              yNext = y;
+            }
+            placePiece(xNext, yNext);
           }
+          console.log('checking piece ' + pieces + ' again');
+          pieces--;
         }
-
         solution[y][x] = 0;
         board.set(solution);
-
+      }
+      yStart = y;
+      if(y < n){
+        console.log('DEBUG');
+        debugger;
+        xStart = 0;
       }
     }
+
   };
 
+  placePiece(0, 0);
 
   return solutionCount;
 };
